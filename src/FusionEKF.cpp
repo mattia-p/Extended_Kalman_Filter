@@ -36,7 +36,30 @@ FusionEKF::FusionEKF() {
    * TODO: Finish initializing the FusionEKF.
    * TODO: Set the process and measurement noises
    */
+    H_laser_ << 1, 0, 0, 0,
+               0, 1, 0, 0;
 
+    // Need to confirm that: How to initialize process covariance matrix?
+    Hj_ << 0.7, 0.7, 0, 0,
+           -0.5, 0.5, 0, 0,
+           0, 0, 0.7, 0.7;
+
+    // State covariance matrix
+    // Need to confirm that: How to initialize state covariance matrix ?
+    P = MatrixXd(4,4);
+    P << 1, 0, 0, 0,
+         0, 1, 0, 0,
+         0, 0, 1000, 0,
+         0, 0, 0, 1000;
+
+    // State transition matrix. delta_t is a variable. Better way to initialize it?
+    F = MatrixXd(4,4);
+    F <<  1, 0, 1, 0,
+          0, 1, 0, 1,
+          0, 0, 1, 0,
+          0, 0, 0, 1;
+
+    // Need to initialize x ?
 
 }
 
@@ -62,7 +85,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     ekf_.x_ << 1, 1, 1, 1;
 
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
-      // TODO: Convert radar from polar to cartesian coordinates 
+      // TODO: Convert radar from polar to cartesian coordinates
       //         and initialize state.
 
     }
