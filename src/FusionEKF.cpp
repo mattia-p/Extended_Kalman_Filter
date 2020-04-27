@@ -36,30 +36,31 @@ FusionEKF::FusionEKF() {
    * TODO: Finish initializing the FusionEKF.
    * TODO: Set the process and measurement noises
    */
+
+   // Initialize lidar process covariance matrix
     H_laser_ << 1, 0, 0, 0,
                0, 1, 0, 0;
 
-    // Need to confirm that: How to initialize process covariance matrix?
+    // Initialize radar process covariance matrix?
     Hj_ << 0.7, 0.7, 0, 0,
            -0.5, 0.5, 0, 0,
            0, 0, 0.7, 0.7;
 
     // State covariance matrix
-    // Need to confirm that: How to initialize state covariance matrix ?
     P = MatrixXd(4,4);
     P << 1, 0, 0, 0,
          0, 1, 0, 0,
          0, 0, 1000, 0,
          0, 0, 0, 1000;
 
-    // State transition matrix. delta_t is a variable. Better way to initialize it?
+    // State transition matrix
     F = MatrixXd(4,4);
     F <<  1, 0, 1, 0,
           0, 1, 0, 1,
           0, 0, 1, 0,
           0, 0, 0, 1;
 
-    // Measurement noises
+    // Measurement noises - given
     noise_ax = 9;
     noise_ay = 9;
 
@@ -94,31 +95,13 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       double rho = measurement_pack.raw_measurements_[0];
       double phi = measurement_pack.raw_measurements_[1];
       double rho_dot = measurement_pack.raw_measurements_[2];
-    /**
-       * Initialization
-       */
-    if (!is_initialized_) {
-    /**
-     * TODO: Initialize the state ekf_.x_ with the first measurement.
-     * TODO: Create the covariance matrix.
-     * You'll need to convert radar from polar to cartesian coordinates.
-     */
-
-    // first measurement
-    cout << "EKF: " << endl;
-    ekf_.x_ = VectorXd(4);
-    ekf_.x_ << 1, 1, 1, 1;
-
-    if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
-      // TODO: Convert radar from polar to cartesian coordinates
-      //         and initialize state.
-      double rho = measurement_pack.raw_measurements_[0];
 
       double px = rho * cos(phi);
       double py = rho * sin(phi);
+      double vx = rho_dot * cos(phi);
+      double vy = rho_dot * sin(phi);
 
-      ekf_.x_ << px, py, 0, 0;
-      // Can we initialize vx and vy ?
+      ekf_.x_ << px, py, vx, vy;
 
 
     }
