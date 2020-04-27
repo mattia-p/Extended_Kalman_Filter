@@ -17,7 +17,7 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
     rmse << 0, 0, 0, 0;
 
    if (estimations.size() == 0 || estimations.size() != ground_truth.size()){
-       cout << "Estimation or ground truth data invalid" << endl;
+       std::cout << "Estimation or ground truth data invalid" << std::endl;
    }
 
    for (int i = 0; i < estimations.size(); i++){
@@ -28,7 +28,7 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
    }
 
    // calculate the mean for each component of the RMSE
-   rsme = rme/estimations.size();
+   rmse = rmse/estimations.size();
 
    // calculate the squared root
    rmse = rmse.array().sqrt();
@@ -36,7 +36,7 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
 
 MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
     // jacobian
-    Hj = MatrixXd(3,4);
+    MatrixXd Hj(3,4);
 
     float px = x_state[0];
     float py = x_state[1];
@@ -50,8 +50,8 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
 
     // check if division by zero
     if (fabs(c1) < 0.0001){
-        cout << "Error in computing jacobian - division by zero" << endl;
-        return
+        std::cout << "Error in computing jacobian - division by zero" << std::endl;
+        return Hj;
     }
 
 
