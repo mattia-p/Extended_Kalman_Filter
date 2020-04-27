@@ -47,22 +47,19 @@ FusionEKF::FusionEKF() {
            0, 0, 0.7, 0.7;
 
     // State covariance matrix
-    P = MatrixXd(4,4);
-    P << 1, 0, 0, 0,
+    MatrixXd P_(4,4);
+    P_ << 1, 0, 0, 0,
          0, 1, 0, 0,
          0, 0, 1000, 0,
          0, 0, 0, 1000;
 
     // State transition matrix
-    F = MatrixXd(4,4);
-    F <<  1, 0, 1, 0,
+    MatrixXd F_(4,4);
+    F_ <<  1, 0, 1, 0,
           0, 1, 0, 1,
           0, 0, 1, 0,
           0, 0, 0, 1;
 
-    // Measurement noises - given
-    noise_ax = 9;
-    noise_ay = 9;
 
 }
 
@@ -100,7 +97,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       double py = rho * sin(phi);
 
       ekf_.x_ << px, py, 0, 0;
-      
+
 
     }
     else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
@@ -128,15 +125,19 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     * Use noise_ax = 9 and noise_ay = 9 for your Q matrix.
     */
 
-    dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0;
+    double dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0;
     previous_timestamp_ = measurement_pack.timestamp_;
 
     double dt2 = dt * dt;
-    double dt3 * dt2 * dt;
+    double dt3 = dt2 * dt;
     double dt4 = dt3 * dt;
 
     ekf_.F_(0,2) = dt;
     ekf_.F_(1,3) = dt;
+
+    // Measurement noises - given
+    double noise_ax = 9.0;
+    double noise_ay = 9.0;
 
     ekf_.Q_ = MatrixXd(4,4);
     ekf_.Q_ << dt4 * noise_ax / 4, 0.0, dt3 * noise_ax / 2, 0.0,
