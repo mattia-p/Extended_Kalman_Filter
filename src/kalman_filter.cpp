@@ -53,14 +53,26 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   /**
    * TODO: update the state by using Extended Kalman Filter equations
    */
-   VectorXd z_pred = H_ * x_;
-   VectorXd Hi = Tools::CalculateJacobian(x_);
-   Vector y = z - Hi;
+   double px = x_(0);
+   double py = x_(1);
+   double vx = x_(2);
+   double vy = x_(3);
 
-   MatrixXd Hit = Hi.tranpose();
-   MatrixXd S = Hi * P_ * Hit + R_;
+   double rho = sqrt(px * px + py * py);
+   double theta = atan2(py, px);
+   double rho_dot = (px*vx + py*vy) / rho;
+
+   VectorXd h = VectorXd(3);
+   h << rho, theta, rho_dot;
+
+   VectorXd y = z - h;
+
+   MatrixXd Hj = tools_.CalculateJacobian(x_);
+
+   MatrixXd Hjt = Hj.tranpose();
+   MatrixXd S = Hj * P_ * Hjt + R_;
    MatrixXd Si = S.inverse();
-   MatrixXd PHt = P_ * Hit;
+   MatrixXd PHt = P_ * Hjt;
    MatrixXd K = PHt * Si;
 
 }
